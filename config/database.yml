@@ -1,0 +1,22 @@
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: 172.17.0.1
+  port: 5432
+  username: root
+  password: root
+
+development:
+  <<: *default
+  database: agenda_mail_development
+
+test:
+  <<: *default
+  database: agenda_mail_test
+production:
+  <<: *default
+  database: agenda_mail_production
+  username: agenda_mail
+  password: <%= ENV['AGENDA_MAIL_DATABASE_PASSWORD'] %>
