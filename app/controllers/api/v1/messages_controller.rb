@@ -6,11 +6,6 @@ module Api
       load_and_authorize_resource # cancancan permissions
       skip_before_action :verify_authenticity_token
       before_action :verify_author, only: [:show]
-      # render form for new message
-
-      def new
-        @message = Message.new
-      end
 
       # creates a new message
       def create
@@ -73,6 +68,7 @@ module Api
       # get all archived messages from the application
       def archived
         @messages = Message.includes(:sender).archived.ordered
+        render json: @messages
       end
 
       private
@@ -89,7 +85,7 @@ module Api
       def verify_author
         message = Message.find(params[:id])
         unless ([message.receiver, message.sender].include?(current_user) && !message.archived?) || current_user.master?
-          redirect_to messages_path
+          render json: message
         end
       end
     end

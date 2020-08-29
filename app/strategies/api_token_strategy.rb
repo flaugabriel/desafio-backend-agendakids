@@ -4,9 +4,7 @@ class ApiTokenStrategy < Warden::Strategies::Base
   end
 
   def authenticate!
-    byebug
     user = User.find_by(token: token)
-
     if user
       success!(user)
     else

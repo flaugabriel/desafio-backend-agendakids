@@ -40,11 +40,11 @@ Rails.application.routes.draw do
       resources :messages do
         collection do
           get 'sent'
+          get '/archived', to: 'messages#archived'
+          patch '/:id/archive', to: 'messages#archive'
+          patch '/archive_multiple', to: 'messages#archive_multiple'
         end
       end
-      get '/archived' => 'messages#archived'
-      patch 'messages/:id/archive' => 'messages#archive'
-      patch '/archive_multiple' => 'messages#archive_multiple'
     end
   end
 end

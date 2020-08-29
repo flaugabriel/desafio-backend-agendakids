@@ -2,11 +2,18 @@
 
 class ApiController < ApplicationController
   protect_from_forgery with: :exception
-  before_action :get_token
+  before_action :token
 
-  def get_token
-    find_user = User.where(token: params[:token])
-    warden.authenticate!(:token)
-    render json: { danger: 'Token invalido!' } unless find_user.present?
+  rescue_from CanCan::AccessDenied do |_exception|
+    render json: { danger: 'Acesso negado. Você não está autorizado a acessar essa página' }
+  end
+
+  def token
+    find_user = User.where(token: request.headers['Authorization'])
+    if find_user.present?
+      warden.authenticate!(:token)
+    else
+      render json: { danger: 'Token invalido!' }
+    end
   end
 end

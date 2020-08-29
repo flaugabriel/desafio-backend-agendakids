@@ -1,43 +1,34 @@
-![agenda-edu](https://user-images.githubusercontent.com/2385859/60444694-11889500-9bf4-11e9-9e9b-cc1e10fe173a.gif)
+## API AGENDA EMAIL DESAFIO BACK-END
 
-#### Bem-vindo ao desafio
-
-Estamos muito felizes que você tenha chegado nessa etapa do nosso processo seletivo, para essa fase, desejamos que você resolva um desafio.
-
-O objetivo é criar uma API para uma aplicação já existente de envio de mensagens.
-
-#### Requisitos
+Este projeto tem como finalizade desenvolver uma api para uma aplicação de envio de emails ja existente, e integrala
+##### Configuração/Ferramentas 
 
 - Criar endpoints da API: https://github.com/agendakids/desafio-backend-rails/blob/master/README.md#api
 
-#### Requisitos bônus
-
-Esses requisitos não são obrigatórios, mas serão levados em consideração como pontos extras no momento da avaliação.
-
-- Ter uma boa cobertura de código
-- Organizar estrutura do projeto utilizando padrões de projetos
-- Evitar N + 1 nas queries;
-- A aplicação ser hospedada no Heroku ou AWS. (Se hospedada, as URLs devem ser enviadas por email.)
-
-#### Critérios de avaliação
-
-- Organização do projeto: Avalia a estrutura do projeto, documentação e uso de controle de versão;
-- Coerência: Avalia se os requisitos foram atendidos;
-- Boas práticas: Avalia se o projeto segue boas práticas de desenvolvimento, incluindo segurança e otimização;
-
-#### Processo de submissão
-
-O desafio deve ser entregue pelo GitHub.
-
-Qualquer dúvida em relação ao desafio, responderemos por e-mail.
-
-Bom trabalho!
-
-
 ## Documentação
 ----
+* Banco de dados postgres 
+* Docker and Postgres container
+* Comando abaixo, configura uma imagem e cria um container com docker configurado:
 
-**Agenda Mail**
+```
+  sudo docker run -d
+  --name=postgres
+  -v /etc/localtime:/etc/localtime:ro
+  -e POSTGRES_USER=root
+  -e POSTGRES_PASSWORD=root
+  -v /storage/pgdata:/var/lib/postgresql/data
+  -p 5432:5432
+  --restart=always
+  postgres
+
+```
+* O projeto pode ser iniciado local com comando rails s.
+* No database.yml do projeto configura host aponta para o docker por fim usuario root e senha root.
+* Postman Canary utilizado para requisições REST.
+* Caso não opite por esta configuração do banco de dados, basta altera o database.yml para forma que preferi.
+
+**Agenda Mail/API**
 ----
 
 Aplicação para troca de mensagens entre usuários.
@@ -59,56 +50,171 @@ bundle exec rails db:setup
 
 **API**
 ----
+## Operações sobre mensagem 
+#### Lista mensagens
+* URL de envio:
+```shell
+curl --location --request GET 'http://localhost:3000/api/v1/messages' \
+--header 'Authorization: XXXX000000'
+```
+* Exemplo de retorno
+```json
+[
+  {
+    "id": 3,
+    "title": "apiteste",
+    "content": "conteudo",
+    "from": 2,
+    "to": 2,
+    "visualized": null,
+    "status": "unread",
+    "archived": null,
+    "response": null,
+    "created_at": "2020-08-28T14:54:52.094-03:00",
+    "updated_at": "2020-08-28T14:54:52.094-03:00"
+  },
+  {
+    "id": 3,
+    "title": "apiteste2",
+    "content": "conteudo2",
+    "from": 2,
+    "to": 2,
+    "visualized": null,
+    "status": "unread",
+    "archived": null,
+    "response": null,
+    "created_at": "2020-08-28T14:54:52.094-03:00",
+    "updated_at": "2020-08-28T14:54:52.094-03:00"
+  }
+]
 
-`METHOD` | `URL` | `PARAMS`
+```
 
-* **URL**
+#### Criando mensagen
+* URL de envio
+```shell
+curl --location --request POST 'http://localhost:3000/api/v1/messages?message[receiver_email]=flaugabriel@gmail.com&message[title]=apiteste&message[content]=conteudo' \
+--header 'Authorization: XXXX000000'
+```
+* parametros 
+```code
+message[receiver_email]: teste@teste.com
+message[title]: apiteste
+message[content]: conteudo
+```
+#### Mensagens enviadas 
+* URL de envio
 
-  `/api/v1`
+```shell
+curl --location --request GET 'http://localhost:3000/api/v1/messages/sent' \
+--header 'Authorization: XXXX000000'
+```
+* Exemplo de resposta
+```json
+[
+  {
+    "id": 3,
+    "title": "apiteste",
+    "content": "conteudo top",
+    "from": 2,
+    "to": 2,
+    "visualized": null,
+    "status": "unread",
+    "archived": null,
+    "response": null,
+    "created_at": "2020-08-28T14:54:52.094-03:00",
+    "updated_at": "2020-08-28T14:54:52.094-03:00"
+  },
+  {
+    "id": 2,
+    "title": "apiteste",
+    "content": "conteudo top",
+    "from": 2,
+    "to": 1,
+    "visualized": null,
+    "status": "unread",
+    "archived": null,
+    "response": null,
+    "created_at": "2020-08-28T14:52:09.909-03:00",
+    "updated_at": "2020-08-28T14:52:09.909-03:00"
+  }
+]
+```
+#### Mensagens Arquivadas
+* URL de envio
+```shell
+curl --location --request GET 'http://localhost:3000/api/v1/messages/archived?permission=master' \
+--header 'Authorization: XXXX000000
+```
+#### Visualiza Mensagem
+* URL de envio
+```shell
+curl --location --request GET 'http://localhost:3000/api/v1/messages/1' \
+--header 'Authorization: XXXX000000'
+```
+* Exemplo de retorno 
+```json
+{
+  "id": 1,
+  "title": "apiteste",
+  "content": "conteudo top",
+  "from": 2,
+  "to": 1,
+  "visualized": null,
+  "status": "archived",
+  "archived": "2020-08-28T15:30:09.273-03:00",
+  "response": null,
+  "created_at": "2020-08-28T14:50:44.521-03:00",
+  "updated_at": "2020-08-28T15:30:09.272-03:00"
+}
+```
+#### Arquiva mensagem
+* URL de envio
+```shell
+curl --location --request PATCH 'http://localhost:3000/api/v1/messages/1/archive' \
+--header 'Authorization: GABR132318'
+```
+* parametro
+```code
+id: 1
+```
+* Exemplo de retorno
+```json
+{
+  "id": 1,
+  "status": "archived",
+  "title": "apiteste",
+  "content": "conteudo top",
+  "from": 2,
+  "to": 1,
+  "visualized": null,
+  "archived": "2020-08-28T15:30:09.273-03:00",
+  "response": null,
+  "created_at": "2020-08-28T14:50:44.521-03:00",
+  "updated_at": "2020-08-28T15:30:09.272-03:00"
+}
+```
+#### Visualiza perfil
+* URL de envio
+```shell
+curl --location --request GET 'http://localhost:3000/api/v1/profile' \
+--header 'Authorization: XXXX000000'
+```
+* Exemplo de retorno
+```json
+{
+  "id": 2,
+  "email": "flaugabriel@gmail.com",
+  "name": "gabriel",
+  "created_at": "2020-08-28T14:23:18.051-03:00",
+  "updated_at": "2020-08-28T17:46:43.363-03:00",
+  "permission": "normal",
+  "token": "GABR132318"
+}
+```
+#### Atualiza perfil
+* URL de envio
+```shell
 
-* **Required**
-
-  `Authorization=[string]` user's token send in header request. Get your token in profile page
-
-  It's a constant value for master token
-
-----
-
-* **Messages**
-
-    `GET` | `/messages`
-
-    example: `curl '/api/v1/messages' -H 'Authorization: xxx'`
-
-* **Create Message**
-
-  `POST` | `/messages` | `message[title]=string&message[content]=string`
-
-  example: `curl -X POST '/api/v1/messages' -H 'Authorization: xxx' -d 'message[receiver_email]=matheus@email.com&message[title]=APITEST&message[content]=CONTEUDO'`
-
-* **Sent**
-
-    `GET` | `/messages/sent`
-
-    example: `curl '/api/v1/messages/sent' -H 'Authorization: xxx'`
-
-* **Show Message**
-
-  `GET` | `/messages/:id`
-
-  example: `curl '/api/v1/messages/1' -H 'Authorization: xxx'`
-
-  OR `curl '/api/v1/messages/1' -H 'Authorization: xxx'`
-
-* **Show Profile**
-
-`GET` | `/profile`
-
-example: `curl '/api/v1/profile' -H 'Authorization: xxx'`
-
-* **Update Profile**
-
-  `PATCH` | `/profile` | `user[name]=string&user[email]=string&user[password]=string&user[password_confirmation]=string`
-
-  example: `curl -g -X PATCH '/api/v1/profile?user[name]=Mateus' -H 'Authorization: xxx'`
+```
 
