@@ -51,6 +51,8 @@ bundle exec rails db:setup
 **API**
 ----
 ## Operações sobre mensagem 
+* Token de usuario visualizado no perfil pelo app principal
+
 #### Lista mensagens
 * URL de envio:
 ```shell
@@ -212,6 +214,14 @@ curl --location --request GET 'http://localhost:3000/api/v1/profile' \
   "token": "GABR132318"
 }
 ```
+#### Mensagem de usuarios
+* URL de envio
+```shell
+
+```
+* 
+*
+
 #### Atualiza perfil
 * URL de envio
 ```shell
