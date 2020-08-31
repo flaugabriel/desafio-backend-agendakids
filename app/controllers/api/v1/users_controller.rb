@@ -22,7 +22,7 @@ module Api
 
         if @user.update(user_params)
           bypass_sign_in(@user) # if user change password sign_in user again
-          render json: { messager: 'Perfil editado com sucesso.' }
+          render json: { messager: 'Perfil editado com sucesso.', profile: @user  }
         else
           render json: { messager: 'Houve um erro.' }
         end
@@ -39,6 +39,7 @@ module Api
         @user = User.find(params[:id])
         @sent = Message.sent_from(@user).ordered
         @received = Message.sent_to(@user).ordered
+        render json: { user: @user, sent: @sent, received: @received }
       end
 
       private

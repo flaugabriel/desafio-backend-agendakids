@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class ApiController < ApplicationController
-  protect_from_forgery with: :exception
   before_action :token
 
   rescue_from CanCan::AccessDenied do |_exception|

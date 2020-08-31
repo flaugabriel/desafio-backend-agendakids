@@ -54,9 +54,7 @@ module Api
         messages = Message.find(params[:messages_ids])
         messages.each(&:archived!)
 
-        respond_to do |format|
-          format.js
-        end
+        render json: 'Mensagens Arquivadas!'
       end
 
       # get all messages that current_user sent
@@ -83,6 +81,7 @@ module Api
       end
 
       def verify_author
+        byebug
         message = Message.find(params[:id])
         unless ([message.receiver, message.sender].include?(current_user) && !message.archived?) || current_user.master?
           render json: message
